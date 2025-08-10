@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Huffman Tree for Blue Pacman</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #005a9c;
+            border-bottom: 2px solid #007acc;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2em;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 40px);
+            gap: 3px;
+            margin: 20px 0;
+            justify-content: start;
+        }
+        .pixel {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .blue { background-color: #007acc; color: white; }
+        .white { background-color: #e9e9e9; color: black; border: 1px solid #ccc; }
+        .black { background-color: #000000; color: white; }
+        .tree-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            overflow-x: auto;
+        }
+        .tree {
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .results-table {
+            margin: 20px 0;
+            border-collapse: collapse;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .results-table th, .results-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        .results-table th {
+            background-color: #007acc;
+            color: white;
+            font-weight: bold;
+        }
+        .binary-output {
+            background: #2d2d2d;
+            color: #9fef00;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        .binary-output strong {
+            color: #ffffff;
+        }
+        .step {
+            margin: 25px 0;
+            padding: 15px 20px;
+            background: #e8f4fd;
+            border-left: 5px solid #007acc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Huffman Coding: The Blue Pacman</h1>
+        
+        <h2>Original 4×4 Image</h2>
+        <div class="image-grid">
+            <div class="pixel white">W</div>
+            <div class="pixel black">K</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel white">W</div>
+            <div class="pixel white">W</div>
+            <div class="pixel white">W</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel blue">B</div>
+            <div class="pixel blue">B</div>
+        </div>
+
+        <div class="step">
+            <strong>Step 1: Count Frequencies</strong><br>
+            Scanning the 16-pixel grid reveals the following symbol counts:
+            <ul>
+                <li><strong>Blue (B):</strong> 11 occurrences</li>
+                <li><strong>White (W):</strong> 4 occurrences</li>
+                <li><strong>Black (K):</strong> 1 occurrence</li>
+            </ul>
+        </div>
+
+        <h2>Frequency & Probability Table</h2>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Frequency</th>
+                    <th>Probability</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>B (Blue)</td>
+                    <td>11</td>
+                    <td>11/16 = 68.75%</td>
+                </tr>
+                <tr>
+                    <td>W (White)</td>
+                    <td>4</td>
+                    <td>4/16 = 25.00%</td>
+                </tr>
+                <tr>
+                    <td>K (Black)</td>
+                    <td>1</td>
+                    <td>1/16 = 6.25%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="step">
+            <strong>Step 2: Build Huffman Tree</strong><br>
+            The tree is built by repeatedly combining the two nodes with the lowest frequency.
+            <ol>
+                <li>Combine <strong>K(1)</strong> + <strong>W(4)</strong> to create an internal node with weight <strong>5</strong>.</li>
+                <li>Combine this <strong>Internal Node(5)</strong> + <strong>B(11)</strong> to create the final root node with weight <strong>16</strong>.</li>
+            </ol>
+        </div>
+
+        <h2>Huffman Tree Structure</h2>
+        <div class="tree-container">
+            <div class="tree">       (Root, 16)
+      /          \
+   '0'          '1'
+  (Node, 5)    (Blue, 11)
+  /       \
+'0'       '1'
+(Black, 1)  (White, 4)</div>
+        </div>
+        
+        <div class="step">
+             <strong>Step 3: Assign Binary Codes</strong><br>
+             Traversing the tree from the root (convention: left=0, right=1):
+             <ul>
+                 <li><strong>Blue (B):</strong> Right → <strong>1</strong> (1 bit)</li>
+                 <li><strong>White (W):</strong> Left, Right → <strong>01</strong> (2 bits)</li>
+                 <li><strong>Black (K):</strong> Left, Left → <strong>00</strong> (2 bits)</li>
+             </ul>
+        </div>
+
+        <h2>Final Encoding Table</h2>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Frequency</th>
+                    <th>Binary Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>B (Blue)</td>
+                    <td>11</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>W (White)</td>
+                    <td>4</td>
+                    <td>01</td>
+                </tr>
+                 <tr>
+                    <td>K (Black)</td>
+                    <td>1</td>
+                    <td>00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>Binary Encoding of the Image</h2>
+        <div class="binary-output">
+            <strong>Pixel Sequence:</strong><br>
+            W K B B B B B B B B W W W B B B<br><br>
+            <strong>Binary Encoding (with spaces):</strong><br>
+            01 00 1 1 1 1 1 1 1 1 01 01 1 1 1 1<br><br>
+            <strong>Final Concatenated String:</strong><br>
+            010011111111010111111
+        </div>
+        
+        <h2>Analysis</h2>
+        <div class="step">
+            <strong>Total bits:</strong> 21 bits<br>
+            <strong>Original bits (fixed 2-bit code, e.g., B=00, W=01, K=10):</strong> 16 pixels × 2 bits/pixel = 32 bits<br>
+            <strong>Compression achieved:</strong> (32 - 21) / 32 = 34.4% reduction<br>
+            <strong>Average bits per symbol:</strong> 21 bits / 16 pixels = 1.3125 bits
+        </div>
+        
+        <h2>Verification</h2>
+        <div class="step">
+            <strong>Decoding the binary string "010011111111010111111":</strong><br>
+            01 00 1 1 1 1 1 1 1 1 01 01 1 1 1 1<br>
+            W&nbsp;&nbsp;K&nbsp;&nbsp;B B B B B B B B W&nbsp;&nbsp;W&nbsp;&nbsp;B B B B<br>
+            ✓ The decoded sequence correctly matches the original image pattern.
+        </div>
+    </div>
+</body>
+</html>
